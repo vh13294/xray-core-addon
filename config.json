@@ -1,0 +1,29 @@
+{
+    "name": "Xray-core",
+    "version": "0.1.0",
+    "slug": "xray_core",
+    "description": "A custom add-on for running Xray-core on Home Assistant.",
+    "url": "https://github.com/xtls/xray-core",
+    "arch": [
+        "aarch64",
+        "amd64",
+        "armhf",
+        "armv7",
+        "i386"
+    ],
+    "startup": "application",
+    "boot": "auto",
+    "options": {
+        "core_config": ""
+    },
+    "schema": {
+        "core_config": "str"
+    },
+    "ports": {
+        "443/tcp": 443
+    },
+    "ports_description": {
+        "443/tcp": "Example port for your Xray service, update in config"
+    },
+    "init": false
+}
