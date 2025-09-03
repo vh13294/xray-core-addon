@@ -1,0 +1,23 @@
+core_config: |
+  {
+      "inbounds": [
+          {
+              "port": 10086,
+              "protocol": "vmess",
+              "settings": {
+                  "clients": [
+                      {
+                          "id": "YOUR_UUID_HERE",
+                          "alterId": 0
+                      }
+                  ]
+              }
+          }
+      ],
+      "outbounds": [
+          {
+              "protocol": "freedom",
+              "settings": {}
+          }
+      ]
+  }
