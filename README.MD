@@ -1,4 +1,3 @@
-```
 # Xray-core Home Assistant Add-on
 This is a custom Home Assistant add-on for Xray-core, designed to be flexible and easy to configure.
 
