@@ -25,5 +25,10 @@
     "ports_description": {
         "443/tcp": "Example port for your Xray service, update in config"
     },
-    "init": false
+    "init": false,
+    "host_network": true,
+    "privileged": [
+        "NET_ADMIN"
+    ],
+    "homeassistant_api": true
 }
