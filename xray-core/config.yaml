@@ -1,5 +1,5 @@
 name: Xray-core
-version: 0.1.1
+version: 0.1.2
 slug: xray_core
 description: A custom add-on for running Xray-core on Home Assistant.
 url: "https://github.com/xtls/xray-core"
