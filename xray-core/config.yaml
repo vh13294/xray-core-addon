@@ -23,7 +23,7 @@ init: false
 host_network: true
 privileged:
   - NET_ADMIN
-homeassistant: 2025.9.0
+homeassistant: 2025.7.0
 hassio_role: admin
 hassio_api: true
 homeassistant_api: true
