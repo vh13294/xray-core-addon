@@ -24,11 +24,14 @@ Full option reference and TP-Link Omada router steps:
 A previous setup that impersonated `www.apple.com` from a Metfone home IP was
 blocked within a day. In short:
 
-- **SNI must match your network.** The default `www.metfone.com.kh` is for a
-  Metfone connection. Pick a site hosted on your own ISP's or host's network,
-  not on a CDN and not a big brand or `.cn` domain.
-- **Check the SNI** isn't blocked on https://www.chinafirewalltest.com, and
-  check it supports TLS 1.3 (shown in the add-on log on every start).
+- **SNI should be close to your network.** The default `itc.edu.kh` is a
+  Cambodian site on its own Cambodian network, chosen for a Cambodian home
+  connection. Metfone's own sites only support TLS 1.2, so they can't be
+  used. Pick a site hosted in your own country, not on a CDN and not a big
+  brand or `.cn` domain.
+- **Check the SNI** isn't blocked on https://www.chinafirewalltest.com. The
+  add-on log checks TLS 1.3, HTTP/2 and the certificate on every start, and
+  prints an ERROR if the SNI can't work.
 - **Unique, random keys per server**, never shared or reused.
 - **Light usage**, a **backup route**, and **test before you travel**.
 

@@ -15,10 +15,10 @@ that QR code in Floxcore (or v2rayN, Shadowrocket, etc.).
 |---|---|---|
 | `server_address` | *(empty)* | Your public hostname (DDNS) or IP, put in the share link. If empty, the add-on detects your public IP. |
 | `public_port` | `443` | The port clients connect to, i.e. the **external** port on your router. |
-| `sni` | `www.metfone.com.kh` | The site REALITY impersonates. Read **Choosing the SNI** below before changing it. |
+| `sni` | `itc.edu.kh` | The site REALITY impersonates. Hostname only: no `https://`, no trailing `/`. Read **Choosing the SNI** below before changing it. |
 | `client_name` | `phone` | Label shown in the client app. |
 | `uuid` | *(auto)* | Set it only if you want a specific UUID. |
-| `short_id` | *(auto)* | 0–16 hex characters. Auto-generated if empty. |
+| `short_id` | *(auto)* | An even number of hex characters, up to 16. Auto-generated if empty. |
 | `fingerprint` | `chrome` | uTLS fingerprint the client uses. |
 | `log_level` | `warning` | Xray log level. |
 | `core_config` | *(empty)* | **Advanced.** Paste a full Xray JSON config to bypass REALITY mode. The inbound must listen on port 443 inside the container. |
@@ -69,22 +69,37 @@ ranges are well known, so a random IP serving an apple.com certificate is an
 easy mismatch, and a `.cn` name on a foreign IP is worse. That IP was blocked
 within a day.
 
-**The default `www.metfone.com.kh`** suits a server on a **Metfone** home
-connection, because your IP and the site are on the same network. On any
-other ISP or VPS, pick a site hosted on *that* provider's network instead.
+**The default `itc.edu.kh`** (Institute of Technology of Cambodia) suits a
+server on a Cambodian home connection. It is hosted in Cambodia on ITC's own
+network (AS139588), supports TLS 1.3 + HTTP/2, and has a valid certificate.
+Use it **without** `www.`: the certificate does not cover `www.itc.edu.kh`.
+On a VPS or in another country, pick a site hosted near *that* network.
+
+Sites tested and rejected (November 2026), so you don't have to retry them:
+
+- **TLS 1.2 only:** `www.metfone.com.kh` and other Metfone hosts, `camid.app`,
+  `emoney.com.kh`, Wing, ACLEDA, PRASAC.
+- **Expired certificate:** `www.sabay.com.kh`, `www.moeys.gov.kh`.
+- **Behind a CDN:** Cellcard, Ezecom (Akamai); Smart, Khmer Times, Fresh News
+  and most news sites (Cloudflare); NBC (CloudFront).
+- **Backup that works:** `www.ppcbank.com.kh` (Cambodian network, valid
+  certificate), though impersonating a bank is best avoided.
 
 A good `sni` passes all of these checks:
 
-1. **Hosted on your provider's network, not a CDN.**
+1. **Hosted near your network, not on a CDN.**
    ```
-   dig +short www.metfone.com.kh
+   dig +short itc.edu.kh
    whois <that IP> | grep -iE 'netname|descr|origin'
    ```
-   It should show your ISP or host. Cloudflare, Akamai, AWS and similar
-   CDNs are a fail.
-2. **Supports TLS 1.3 + HTTP/2.** The add-on log shows this on every start,
-   via a `curl` check and `xray tls ping`. The certificate must cover the
-   hostname.
+   It should show a local ISP or the site's own network. Cloudflare, Akamai,
+   AWS and similar CDNs are a fail.
+2. **Supports TLS 1.3 + HTTP/2 with a valid certificate.** The add-on checks
+   this on every start. It logs an ERROR if the site only has TLS 1.2, lacks
+   HTTP/2, or has an expired or mismatched certificate, and a warning when the
+   certificate expires within 14 days. In the `xray tls ping` output, a
+   failure under "Pinging without SNI" is normal; "Pinging with SNI" must say
+   `TLS 1.3`.
 3. **Not blocked in China.** Test it on
    https://www.chinafirewalltest.com and on itdog.cn's HTTP test. Most nodes
    should load it.

@@ -94,18 +94,67 @@ else
     bashio::log.warning "Set server_address to a DDNS hostname so the link survives IP changes."
 fi
 
-# Pre-flight: the camouflage site must support TLS 1.3 + HTTP/2 (REALITY needs this).
+# ---------------------------------------------------------------------------
+# Pre-flight: REALITY needs an sni site with TLS 1.3, HTTP/2 and a valid
+# certificate for that exact hostname. Problems are logged as errors but do
+# not stop the add-on, so a short outage of the sni site at boot (for example
+# after a power cut) cannot take your proxy offline.
+# ---------------------------------------------------------------------------
+SNI_OK=true
+sni_error() { bashio::log.error "$1"; SNI_OK=false; }
+
 case "${SNI}" in
     *apple.com*|*microsoft.com*|*google.com*|*amazon.com*|*cloudflare.com*|*.cn)
         bashio::log.warning "sni ${SNI} is a big-brand or .cn domain. Its IPs are well known and will not match yours, which makes blocking more likely. See the add-on Documentation tab." ;;
 esac
-if curl -fsS -o /dev/null --max-time 10 --tlsv1.3 --http2 "https://${SNI}"; then
-    bashio::log.info "SNI target ${SNI} is reachable over TLS 1.3 + HTTP/2."
-else
-    bashio::log.warning "Could not reach https://${SNI} over TLS 1.3 + HTTP/2. Pick a different sni if clients fail to connect."
+
+CURL_RC=0
+HTTP_VERSION="$(curl -s -o /dev/null --max-time 10 --tlsv1.3 --http2 \
+    -w '%{http_version}' "https://${SNI}" 2>/dev/null)" || CURL_RC=$?
+case "${CURL_RC}" in
+    0)
+        if [ "${HTTP_VERSION}" = "2" ]; then
+            bashio::log.info "SNI target ${SNI} is reachable over TLS 1.3 + HTTP/2."
+        else
+            sni_error "sni ${SNI} supports TLS 1.3 but not HTTP/2. REALITY needs both: pick a different sni."
+        fi ;;
+    35)
+        sni_error "sni ${SNI} failed the TLS 1.3 handshake. The site probably only supports TLS 1.2: pick a different sni." ;;
+    51|60)
+        sni_error "sni ${SNI} has an invalid certificate (expired, or not issued for this exact hostname). Pick a different sni, or try it with/without www." ;;
+    6)
+        sni_error "sni ${SNI} does not resolve. Check the spelling: hostname only, no https:// and no trailing /." ;;
+    *)
+        bashio::log.warning "Could not check https://${SNI} (curl exit ${CURL_RC}). It may be temporarily down; pick a different sni if clients fail to connect." ;;
+esac
+
+# Warn early when the sni site's certificate is about to expire.
+if [ "${CURL_RC}" -eq 0 ]; then
+    CERT="$(echo | timeout 10 openssl s_client -connect "${SNI}:443" -servername "${SNI}" 2>/dev/null \
+        | openssl x509 2>/dev/null || true)"
+    if [ -n "${CERT}" ]; then
+        CERT_END="$(printf '%s\n' "${CERT}" | openssl x509 -noout -enddate | cut -d= -f2)"
+        if printf '%s\n' "${CERT}" | openssl x509 -noout -checkend $((14 * 86400)) >/dev/null; then
+            bashio::log.info "sni certificate is valid until ${CERT_END}."
+        else
+            bashio::log.warning "sni certificate expires soon (${CERT_END}). If the site does not renew it, clients will stop connecting: have a backup sni ready."
+        fi
+    fi
 fi
-bashio::log.info "xray tls ping ${SNI}:"
-timeout 20 xray tls ping "${SNI}" 2>&1 | sed 's/^/    /' || bashio::log.warning "xray tls ping failed for ${SNI}."
+
+bashio::log.info "xray tls ping ${SNI} (a failure under 'Pinging without SNI' is normal):"
+PING_OUT="$(timeout 20 xray tls ping "${SNI}" 2>&1 || true)"
+printf '%s\n' "${PING_OUT}" | sed 's/^/    /'
+if ! printf '%s\n' "${PING_OUT}" | sed -n '/Pinging with SNI/,$p' \
+        | grep -qE 'TLS Version:[[:space:]]+TLS 1\.3'; then
+    sni_error "xray tls ping did not get a TLS 1.3 handshake from ${SNI} with SNI."
+fi
+
+if [ "${SNI_OK}" = true ]; then
+    bashio::log.info "sni check passed."
+else
+    bashio::log.error "sni check FAILED (see above). Xray will still start, but clients will most likely not connect until you change sni."
+fi
 
 # ---------------------------------------------------------------------------
 # Build the Xray server config.

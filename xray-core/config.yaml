@@ -1,5 +1,5 @@
 name: Xray-core
-version: 1.0.0
+version: 1.0.1
 slug: xray_core
 description: Xray-core VLESS + REALITY proxy server, with auto-generated keys and a QR code for your phone
 url: https://github.com/vh13294/xray-core-addon
@@ -16,7 +16,7 @@ ports_description:
 options:
   server_address: ""
   public_port: 443
-  sni: www.metfone.com.kh
+  sni: itc.edu.kh
   client_name: phone
   uuid: ""
   short_id: ""

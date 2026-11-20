@@ -17,8 +17,8 @@ core_config: |
           "network": "raw",
           "security": "reality",
           "realitySettings": {
-            "target": "www.metfone.com.kh:443",
-            "serverNames": ["www.metfone.com.kh"],
+            "target": "itc.edu.kh:443",
+            "serverNames": ["itc.edu.kh"],
             "privateKey": "YOUR_PRIVATE_KEY",
             "shortIds": ["YOUR_RANDOM_16_HEX"]
           }

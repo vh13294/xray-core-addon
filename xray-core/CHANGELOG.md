@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.0.1
+
+- Default `sni` is now `itc.edu.kh`. `www.metfone.com.kh` only supports
+  TLS 1.2, which REALITY can't use.
+- Stricter sni check on start: clear ERRORs for no TLS 1.3, no HTTP/2, an
+  expired or mismatched certificate, or a hostname that doesn't resolve. Also
+  warns when the sni certificate expires within 14 days. Xray still starts, so
+  a short outage of the sni site can't take the proxy offline.
+- `xray tls ping` result is now checked, not just printed.
+- DOCS: list of Cambodian sites already tested and rejected.
+
 ## 1.0.0
 
 - New REALITY mode (default): VLESS + REALITY + Vision with an auto-generated
