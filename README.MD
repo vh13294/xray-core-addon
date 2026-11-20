@@ -31,7 +31,7 @@ Full option reference and TP-Link Omada router steps:
 
 | Phone | App | Notes |
 |---|---|---|
-| iPhone | **V2Box** (free) | Tested: imports the link and connects. |
+| iPhone | **V2Box** (free) | Tested: imports the link and connects. Recommended settings for China: [V2BOX.md](V2BOX.md). |
 | iPhone | Shadowrocket (paid) | Popular, supports REALITY. |
 | Android | **v2rayNG** (free) | The standard Android Xray client. |
 | Any | Hiddify (free) | iPhone, Android, Windows and Mac. |
