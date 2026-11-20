@@ -1,5 +1,5 @@
 name: Xray-core
-version: 1.0.1
+version: 1.0.2
 slug: xray_core
 description: Xray-core VLESS + REALITY proxy server, with auto-generated keys and a QR code for your phone
 url: https://github.com/vh13294/xray-core-addon
@@ -9,6 +9,10 @@ arch:
 startup: services
 boot: auto
 init: false
+ingress: true
+ingress_port: 8099
+panel_icon: mdi:qrcode
+panel_title: Xray QR
 ports:
   443/tcp: 443
 ports_description:

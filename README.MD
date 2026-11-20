@@ -1,7 +1,7 @@
 # Xray-core Home Assistant Add-on
 
 Run an Xray-core **VLESS + REALITY** server on Home Assistant. Keys are
-generated automatically, and the add-on log shows a QR code you can scan into
+generated automatically, and the add-on's **Open Web UI** page shows a QR code you can scan into
 Floxcore, v2rayN, Shadowrocket and similar clients.
 
 ## Install
@@ -13,7 +13,7 @@ Floxcore, v2rayN, Shadowrocket and similar clients.
    install builds the image on your machine and takes a few minutes.
 4. On the **Configuration** tab, set `server_address` to your DDNS hostname or
    public IP and save.
-5. Click **Start**, then open the **Log** tab and scan the QR code.
+5. Click **Start**, then **Open Web UI** and scan the QR code.
 6. Forward TCP 443 on your router to Home Assistant.
 
 Full option reference and TP-Link Omada router steps:

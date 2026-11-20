@@ -6,7 +6,7 @@ the hardest common setup for firewalls to fingerprint.
 
 On first start the add-on generates a client UUID, a REALITY key pair and a
 short ID. It keeps them in `/data`, so they survive restarts and updates. It
-then prints a `vless://` share link and a **QR code** in the **Log** tab. Scan
+then shows a `vless://` share link and a **QR code** on the add-on's **Open Web UI** page (also in the sidebar as "Xray QR"). Scan
 that QR code in Floxcore (or v2rayN, Shadowrocket, etc.).
 
 ## Options

@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.2
+
+- New **Open Web UI** page (and "Xray QR" sidebar item) with a scannable QR
+  code and the share link to copy. The text QR in the log was removed: the
+  log viewer adds gaps between lines, so phones couldn't scan it.
+- The page sits behind Home Assistant's login (ingress) and only accepts
+  connections from the Supervisor.
+
 ## 1.0.1
 
 - Default `sni` is now `itc.edu.kh`. `www.metfone.com.kh` only supports

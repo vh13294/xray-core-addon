@@ -7,7 +7,7 @@ ARG XRAY_VERSION=26.11.9
 # Download a pinned Xray-core release at build time (not on every start)
 # and verify it against the official SHA-256 digest.
 RUN set -eux; \
-    apk add --no-cache ca-certificates curl jq libqrencode-tools openssl; \
+    apk add --no-cache ca-certificates curl jq libqrencode-tools openssl busybox-extras; \
     apk add --no-cache --virtual .build-deps unzip; \
     case "${BUILD_ARCH}" in \
       amd64)   XRAY_ARCH="64" ;; \

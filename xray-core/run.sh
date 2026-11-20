@@ -6,9 +6,41 @@ STATE_FILE=/data/state.json
 XRAY_CONFIG=/data/xray.json
 CLIENT_FILE=/data/client.txt
 LISTEN_PORT=443
+WEB_ROOT=/data/www
+WEB_PORT=8099
 
 umask 077
 bashio::log.info "$(xray version | head -n1)"
+
+# ---------------------------------------------------------------------------
+# Web UI (Home Assistant ingress): a page with a scannable QR code. The log's
+# text QR often can't be scanned, because the log viewer adds gaps between
+# lines. Ingress pages sit behind Home Assistant's login, and the server only
+# accepts connections from the Supervisor's ingress proxy.
+# ---------------------------------------------------------------------------
+start_web() {
+    # $1 = HTML body
+    mkdir -p "${WEB_ROOT}"
+    cat > "${WEB_ROOT}/index.html" <<EOF
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Xray-core</title>
+<style>
+  body { font-family: system-ui, sans-serif; background: #fff; color: #111;
+         max-width: 520px; margin: 24px auto; padding: 0 16px; }
+  .qr svg { width: 100%; height: auto; aspect-ratio: 1; display: block; }
+  textarea { width: 100%; height: 7em; font: 12px monospace; }
+  .warn { color: #a00; }
+</style></head>
+<body>
+$1
+</body></html>
+EOF
+    printf 'A:172.30.32.2\nD:*\n' > /etc/httpd.conf
+    busybox-extras httpd -p "${WEB_PORT}" -h "${WEB_ROOT}" -c /etc/httpd.conf
+}
 
 # ---------------------------------------------------------------------------
 # Custom mode: if core_config is set, use it as-is.
@@ -21,6 +53,7 @@ if bashio::config.has_value 'core_config'; then
         exit 1
     fi
     bashio::log.warning "In custom mode your inbound must listen on port ${LISTEN_PORT} inside the container."
+    start_web "<h2>Xray-core</h2><p>Custom mode (<code>core_config</code> is set): no QR code is generated.</p>"
     xray run -test -c "${XRAY_CONFIG}"
     exec xray run -c "${XRAY_CONFIG}"
 fi
@@ -217,11 +250,27 @@ NAME_ENC="$(jq -rn --arg s "${CLIENT_NAME}" '$s|@uri')"
 LINK="vless://${UUID}@${HOST}:${PUBLIC_PORT}?encryption=none&flow=xtls-rprx-vision&security=reality&sni=${SNI}&fp=${FINGERPRINT}&pbk=${PUBLIC_KEY}&sid=${SHORT_ID}&type=tcp#${NAME_ENC}"
 echo "${LINK}" > "${CLIENT_FILE}"
 
+QR_SVG="$(qrencode -t SVG -s 8 -m 4 -o - "${LINK}" | sed '/^<?xml/d')"
+LINK_HTML="$(jq -rn --arg s "${LINK}" '$s|@html')"
+NAME_HTML="$(jq -rn --arg s "${CLIENT_NAME}" '$s|@html')"
+SNI_HTML="$(jq -rn --arg s "${SNI}" '$s|@html')"
+SNI_NOTE=""
+if [ "${SNI_OK}" != true ]; then
+    SNI_NOTE="<p class=\"warn\"><b>sni check failed.</b> Clients will most likely not connect until you change <code>sni</code>. See the add-on log.</p>"
+fi
+start_web "<h2>Xray-core: ${NAME_HTML}</h2>
+${SNI_NOTE}
+<p>Scan this in Floxcore (or v2rayN, Shadowrocket):</p>
+<div class=\"qr\">${QR_SVG}</div>
+<p>Or copy the link and use <i>Import from clipboard</i>:</p>
+<textarea readonly onclick=\"this.select()\">${LINK_HTML}</textarea>
+<p>SNI: <code>${SNI_HTML}</code></p>
+<p class=\"warn\">This link is the password to your proxy. Don't share it or post screenshots of it.</p>"
+
 bashio::log.info "-------------------------------------------------------------"
-bashio::log.info "Client share link (import into Floxcore):"
+bashio::log.info "Client share link (copy it, then use Import from clipboard in Floxcore):"
 echo "${LINK}"
-bashio::log.info "QR code:"
-qrencode -t ANSIUTF8 -m 2 "${LINK}" || bashio::log.warning "Could not render QR code."
+bashio::log.info "For a scannable QR code, click OPEN WEB UI on the add-on page (or the 'Xray QR' sidebar item)."
 bashio::log.info "-------------------------------------------------------------"
 
 xray run -test -c "${XRAY_CONFIG}"
