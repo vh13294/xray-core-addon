@@ -240,7 +240,7 @@ jq -n \
 }' > "${XRAY_CONFIG}"
 
 # ---------------------------------------------------------------------------
-# Share link + QR code for Floxcore / v2rayN / Shadowrocket etc.
+# Share link + QR code for V2Box / v2rayNG / Shadowrocket etc.
 # ---------------------------------------------------------------------------
 HOST="${SERVER_ADDRESS}"
 case "${HOST}" in
@@ -260,7 +260,7 @@ if [ "${SNI_OK}" != true ]; then
 fi
 start_web "<h2>Xray-core: ${NAME_HTML}</h2>
 ${SNI_NOTE}
-<p>Scan this in Floxcore (or v2rayN, Shadowrocket):</p>
+<p>Scan this in V2Box (iPhone), v2rayNG (Android) or Shadowrocket:</p>
 <div class=\"qr\">${QR_SVG}</div>
 <p>Or copy the link and use <i>Import from clipboard</i>:</p>
 <textarea readonly onclick=\"this.select()\">${LINK_HTML}</textarea>
@@ -268,7 +268,7 @@ ${SNI_NOTE}
 <p class=\"warn\">This link is the password to your proxy. Don't share it or post screenshots of it.</p>"
 
 bashio::log.info "-------------------------------------------------------------"
-bashio::log.info "Client share link (copy it, then use Import from clipboard in Floxcore):"
+bashio::log.info "Client share link (copy it, then use Import from clipboard in V2Box / v2rayNG):"
 echo "${LINK}"
 bashio::log.info "For a scannable QR code, click OPEN WEB UI on the add-on page (or the 'Xray QR' sidebar item)."
 bashio::log.info "-------------------------------------------------------------"

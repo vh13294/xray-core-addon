@@ -7,7 +7,8 @@ the hardest common setup for firewalls to fingerprint.
 On first start the add-on generates a client UUID, a REALITY key pair and a
 short ID. It keeps them in `/data`, so they survive restarts and updates. It
 then shows a `vless://` share link and a **QR code** on the add-on's **Open Web UI** page (also in the sidebar as "Xray QR"). Scan
-that QR code in Floxcore (or v2rayN, Shadowrocket, etc.).
+that QR code in V2Box (iPhone) or v2rayNG (Android). Floxcore did not import
+these links in testing.
 
 ## Options
 
@@ -55,7 +56,7 @@ the add-on, which clears its `/data`. Then rescan the new QR code.
 ## Testing
 
 From a phone on **mobile data** (not your home Wi-Fi), import the QR code into
-Floxcore and connect. Then open https://api.ipify.org: it should show your
+V2Box and connect. Then open https://api.ipify.org: it should show your
 home IP.
 
 ## Choosing the SNI

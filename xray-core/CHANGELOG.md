@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.3
+
+- Recommend V2Box (iPhone) and v2rayNG (Android) instead of Floxcore, which
+  rejected the share link in testing. V2Box is confirmed working.
+- README: new Client apps section.
+
 ## 1.0.2
 
 - New **Open Web UI** page (and "Xray QR" sidebar item) with a scannable QR

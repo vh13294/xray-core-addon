@@ -2,7 +2,8 @@
 
 Run an Xray-core **VLESS + REALITY** server on Home Assistant. Keys are
 generated automatically, and the add-on's **Open Web UI** page shows a QR code you can scan into
-Floxcore, v2rayN, Shadowrocket and similar clients.
+V2Box (iPhone), v2rayNG (Android), Shadowrocket and similar clients. See
+[Client apps](#client-apps).
 
 ## Install
 
@@ -47,7 +48,7 @@ ISP and IP.
    certificate for your `sni` site (for example `itc.edu.kh`), the forward
    works. A camera page, an Ezecom page or a timeout means Ezecom isn't
    forwarding raw TCP on that port, so ask them.
-6. Rescan the QR code from **Open Web UI** in Floxcore.
+6. Rescan the QR code from **Open Web UI** in your client app.
 
 Things to know:
 
@@ -56,6 +57,22 @@ Things to know:
 - A port other than 443 is slightly easier to spot than 443. Keep usage light.
 - `www.ezecom.com.kh` sits behind Akamai (a CDN), so don't use it as `sni`.
   Keep `itc.edu.kh`.
+
+## Client apps
+
+| Phone | App | Notes |
+|---|---|---|
+| iPhone | **V2Box** (free) | Tested: imports the link and connects. |
+| iPhone | Shadowrocket (paid) | Popular, supports REALITY. |
+| Android | **v2rayNG** (free) | The standard Android Xray client. |
+| Any | Hiddify (free) | iPhone, Android, Windows and Mac. |
+
+Floxcore rejected these links in testing, both by QR code and clipboard, so
+use one of the apps above.
+
+Import by scanning the QR code on **Open Web UI**, or copy the `vless://`
+link and use the app's **Import from clipboard**. Install the app **before**
+travelling to China: VPN apps aren't available in Chinese app stores.
 
 ## Avoiding blocks (lessons learned)
 

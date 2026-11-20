@@ -1,5 +1,5 @@
 name: Xray-core
-version: 1.0.2
+version: 1.0.3
 slug: xray_core
 description: Xray-core VLESS + REALITY proxy server, with auto-generated keys and a QR code for your phone
 url: https://github.com/vh13294/xray-core-addon
