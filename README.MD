@@ -74,6 +74,37 @@ Import by scanning the QR code on **Open Web UI**, or copy the `vless://`
 link and use the app's **Import from clipboard**. Install the app **before**
 travelling to China: VPN apps aren't available in Chinese app stores.
 
+## Rotating keys (if the QR code leaks)
+
+Your keys are saved in the add-on's private storage. Restarting the add-on,
+restarting Home Assistant, rebooting or updating does **not** change them.
+Treat the QR code and `vless://` link like a password: anyone who has them
+can use your proxy.
+
+**Quick rotation (keeps your settings).** A leaked link stops working as soon
+as the UUID changes.
+
+1. Generate a new UUID, for example at https://www.uuidgenerator.net, and a
+   new short ID of 16 random hex characters (0–9, a–f).
+2. On the add-on's **Configuration** tab, put them in `uuid` and `short_id`,
+   then **Save** and **Restart**.
+3. Open **Web UI**, rescan the new QR code, and delete the old profile from
+   your phone.
+
+**Full rotation (new key pair too).** Do this after an IP block, or if you
+want everything fresh.
+
+1. Note your settings (`server_address`, `public_port`, `sni`). Uninstalling
+   deletes them.
+2. **Uninstall** the add-on, then **Install** it again. This wipes its storage,
+   so a new UUID, REALITY key pair and short ID are generated.
+3. Re-enter your settings, start it, and rescan the QR code from **Open Web
+   UI**.
+
+Avoid leaks in the first place. Don't post screenshots of the QR code or the
+add-on log (the log also shows the link), and remember that anyone with admin
+access to Home Assistant can see both.
+
 ## Avoiding blocks (lessons learned)
 
 A previous setup that impersonated `www.apple.com` from a Metfone home IP was
