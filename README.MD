@@ -84,8 +84,20 @@ can use your proxy.
 **Quick rotation (keeps your settings).** A leaked link stops working as soon
 as the UUID changes.
 
-1. Generate a new UUID, for example at https://www.uuidgenerator.net, and a
-   new short ID of 16 random hex characters (0–9, a–f).
+1. Generate a new UUID and a new short ID (16 random hex characters) **on
+   your own computer**. Don't use a website: the UUID is effectively your
+   password.
+
+   Windows (PowerShell):
+   ```powershell
+   [guid]::NewGuid().ToString()
+   $b = New-Object byte[] 8; [Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($b); -join ($b | % { $_.ToString('x2') })
+   ```
+   Mac / Linux:
+   ```sh
+   uuidgen | tr 'A-Z' 'a-z'
+   openssl rand -hex 8
+   ```
 2. On the add-on's **Configuration** tab, put them in `uuid` and `short_id`,
    then **Save** and **Restart**.
 3. Open **Web UI**, rescan the new QR code, and delete the old profile from
