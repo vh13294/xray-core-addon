@@ -1,23 +1,29 @@
+# Advanced only: leave core_config empty to use the built-in REALITY mode.
+# Your inbound must listen on port 443 inside the container.
 core_config: |
   {
-      "inbounds": [
-          {
-              "port": 10086,
-              "protocol": "vmess",
-              "settings": {
-                  "clients": [
-                      {
-                          "id": "YOUR_UUID_HERE",
-                          "alterId": 0
-                      }
-                  ]
-              }
+    "log": { "loglevel": "warning" },
+    "inbounds": [
+      {
+        "port": 443,
+        "protocol": "vless",
+        "settings": {
+          "clients": [
+            { "id": "YOUR_UUID", "flow": "xtls-rprx-vision" }
+          ],
+          "decryption": "none"
+        },
+        "streamSettings": {
+          "network": "raw",
+          "security": "reality",
+          "realitySettings": {
+            "target": "www.metfone.com.kh:443",
+            "serverNames": ["www.metfone.com.kh"],
+            "privateKey": "YOUR_PRIVATE_KEY",
+            "shortIds": ["YOUR_RANDOM_16_HEX"]
           }
-      ],
-      "outbounds": [
-          {
-              "protocol": "freedom",
-              "settings": {}
-          }
-      ]
+        }
+      }
+    ],
+    "outbounds": [{ "protocol": "freedom" }]
   }

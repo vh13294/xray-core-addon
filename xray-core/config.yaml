@@ -1,30 +1,35 @@
 name: Xray-core
-version: 0.1.2
+version: 1.0.0
 slug: xray_core
-description: A custom add-on for running Xray-core on Home Assistant.
-url: "https://github.com/xtls/xray-core"
+description: Xray-core VLESS + REALITY proxy server, with auto-generated keys and a QR code for your phone
+url: https://github.com/vh13294/xray-core-addon
 arch:
   - aarch64
   - amd64
-  - armhf
-  - armv7
-  - i386
-startup: application
+startup: services
 boot: auto
-options:
-  core_config: ""
-schema:
-  core_config: str
+init: false
 ports:
   443/tcp: 443
 ports_description:
-  443/tcp: "Example port for your Xray service, update in config"
-init: false
-host_network: true
-privileged:
-  - NET_ADMIN
-homeassistant: 2025.7.0
-hassio_role: admin
-hassio_api: true
-homeassistant_api: true
-full_access: true
+  443/tcp: Xray inbound (forward this port on your router)
+options:
+  server_address: ""
+  public_port: 443
+  sni: www.metfone.com.kh
+  client_name: phone
+  uuid: ""
+  short_id: ""
+  fingerprint: chrome
+  log_level: warning
+  core_config: ""
+schema:
+  server_address: str?
+  public_port: port
+  sni: str
+  client_name: str
+  uuid: str?
+  short_id: match(^([0-9a-f]{2}){0,8}$)?
+  fingerprint: list(chrome|firefox|safari|ios|android|edge|random)
+  log_level: list(debug|info|warning|error|none)
+  core_config: str?
