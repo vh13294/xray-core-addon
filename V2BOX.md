@@ -44,8 +44,13 @@ the `xtls-rprx-vision` flow this server uses.
 
 - **DNS server:** select **`DoH: 1.1.1.1`** instead of `DoU: 1.1.1.1`. Plain
   UDP DNS is easy for the firewall to tamper with; DoH is encrypted.
-- **Remote/Domestic Servers:** if offered, set Domestic to `223.5.5.5`
-  (AliDNS) so Chinese sites resolve correctly.
+- **Remote/Domestic Servers:** if offered:
+  - **Remote:** `DoH: 1.1.1.1`, encrypted, for foreign sites.
+  - **Domestic:** `DoU: 223.5.5.5` (AliDNS, plain UDP) so Chinese sites
+    resolve correctly. Lookups for Chinese domains aren't tampered with, and
+    UDP is fastest. `DoH: https://223.5.5.5/dns-query` also works.
+  - **Avoid DoT.** It uses port 853, which is easy to spot and often blocked
+    or throttled in China. DoH looks like normal HTTPS.
 - **Query Strategy:** `UseIPv4`. The server is IPv4-only, so this avoids
   wasted IPv6 attempts.
 - **FakeDNS:** on is fine.
