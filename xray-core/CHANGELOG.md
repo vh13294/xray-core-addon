@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.4
+
+- New `rotate_keys` option: turn it on and restart to get a new UUID,
+  REALITY key pair and short ID without reinstalling. The add-on switches it
+  back off by itself, and keys rotate only once per switch-on, so a forgotten
+  switch can't change them on a later restart.
+- Adds `hassio_api` (default role), used only to switch `rotate_keys` off.
+
 ## 1.0.3
 
 - Recommend V2Box (iPhone) and v2rayNG (Android) instead of Floxcore, which

@@ -1,5 +1,5 @@
 name: Xray-core
-version: 1.0.3
+version: 1.0.4
 slug: xray_core
 description: Xray-core VLESS + REALITY proxy server, with auto-generated keys and a QR code for your phone
 url: https://github.com/vh13294/xray-core-addon
@@ -9,6 +9,7 @@ arch:
 startup: services
 boot: auto
 init: false
+hassio_api: true
 ingress: true
 ingress_port: 8099
 panel_icon: mdi:qrcode
@@ -24,6 +25,7 @@ options:
   client_name: phone
   uuid: ""
   short_id: ""
+  rotate_keys: false
   fingerprint: chrome
   log_level: warning
   core_config: ""
@@ -34,6 +36,7 @@ schema:
   client_name: str
   uuid: str?
   short_id: match(^([0-9a-f]{2}){0,8}$)?
+  rotate_keys: bool
   fingerprint: list(chrome|firefox|safari|ios|android|edge|random)
   log_level: list(debug|info|warning|error|none)
   core_config: str?

@@ -81,35 +81,27 @@ restarting Home Assistant, rebooting or updating does **not** change them.
 Treat the QR code and `vless://` link like a password: anyone who has them
 can use your proxy.
 
-**Quick rotation (keeps your settings).** A leaked link stops working as soon
-as the UUID changes.
+**Rotate (recommended).** Gives you a new UUID, REALITY key pair and short ID
+and keeps all your settings.
 
-1. Generate a new UUID and a new short ID (16 random hex characters) **on
-   your own computer**. Don't use a website: the UUID is effectively your
-   password.
-
-   Windows (PowerShell):
-   ```powershell
-   [guid]::NewGuid().ToString()
-   $b = New-Object byte[] 8; [Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($b); -join ($b | % { $_.ToString('x2') })
-   ```
-   Mac / Linux:
-   ```sh
-   uuidgen | tr 'A-Z' 'a-z'
-   openssl rand -hex 8
-   ```
-2. On the add-on's **Configuration** tab, put them in `uuid` and `short_id`,
-   then **Save** and **Restart**.
+1. On the add-on's **Configuration** tab, turn on `rotate_keys`, then
+   **Save** and **Restart** the add-on.
+2. The add-on generates new keys and switches `rotate_keys` back off by
+   itself. Reload the Configuration tab to see it off.
 3. Open **Web UI**, rescan the new QR code, and delete the old profile from
    your phone.
 
-**Full rotation (new key pair too).** Do this after an IP block, or if you
-want everything fresh.
+Keys are rotated only **once** each time you switch the option on. If the
+add-on can't switch it back off, later restarts keep the new keys, and the
+log asks you to turn `rotate_keys` off. If `uuid` or `short_id` are filled in
+on the Configuration tab, those values are kept, so clear them first.
+
+**Full reset (reinstall).** Gives the same new keys but also clears every
+setting. Only needed if something is broken.
 
 1. Note your settings (`server_address`, `public_port`, `sni`). Uninstalling
    deletes them.
-2. **Uninstall** the add-on, then **Install** it again. This wipes its storage,
-   so a new UUID, REALITY key pair and short ID are generated.
+2. **Uninstall** the add-on, then **Install** it again.
 3. Re-enter your settings, start it, and rescan the QR code from **Open Web
    UI**.
 

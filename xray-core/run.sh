@@ -71,11 +71,33 @@ state_set() {
     mv "${tmp}" "${STATE_FILE}"
 }
 
+# rotate_keys: generate a new UUID, key pair and short ID once, then switch
+# the option back off. The "rotated" marker makes sure keys are rotated only
+# once even if switching the option off fails, so a later restart (say, while
+# travelling) can never change the keys by surprise.
+ROTATE=false
+if bashio::config.true 'rotate_keys'; then
+    if [ "$(state_get rotated)" = "yes" ]; then
+        bashio::log.warning "rotate_keys is still on, but keys were already rotated. Keeping the current keys. Turn rotate_keys off."
+    else
+        ROTATE=true
+        bashio::log.warning "rotate_keys is on: generating a new UUID, REALITY key pair and short ID. Old links and QR codes stop working."
+        for opt in uuid short_id; do
+            if bashio::config.has_value "${opt}"; then
+                bashio::log.warning "${opt} is set in the configuration, so it is kept. Clear it to get a random one."
+            fi
+        done
+    fi
+else
+    state_set rotated ""
+fi
+saved() { if [ "${ROTATE}" = true ]; then echo ""; else state_get "$1"; fi; }
+
 # UUID: option > saved > new
 if bashio::config.has_value 'uuid'; then
     UUID="$(bashio::config 'uuid')"
 else
-    UUID="$(state_get uuid)"
+    UUID="$(saved uuid)"
     if [ -z "${UUID}" ]; then
         UUID="$(xray uuid)"
         bashio::log.info "Generated a new client UUID."
@@ -85,7 +107,7 @@ state_set uuid "${UUID}"
 
 # X25519 key pair. `xray x25519` prints the private key on line 1 and the
 # public key on line 2 (labels differ between versions, so parse by line).
-PRIVATE_KEY="$(state_get private_key)"
+PRIVATE_KEY="$(saved private_key)"
 if [ -z "${PRIVATE_KEY}" ]; then
     PRIVATE_KEY="$(xray x25519 | sed -n '1s/^[^:]*:[[:space:]]*//p')"
     bashio::log.info "Generated a new REALITY key pair."
@@ -101,12 +123,26 @@ state_set private_key "${PRIVATE_KEY}"
 if bashio::config.has_value 'short_id'; then
     SHORT_ID="$(bashio::config 'short_id')"
 else
-    SHORT_ID="$(state_get short_id)"
+    SHORT_ID="$(saved short_id)"
     if [ -z "${SHORT_ID}" ]; then
         SHORT_ID="$(head -c 8 /dev/urandom | od -An -tx1 | tr -d ' \n')"
     fi
 fi
 state_set short_id "${SHORT_ID}"
+
+if [ "${ROTATE}" = true ]; then
+    state_set rotated yes
+    # Switch rotate_keys back off in the add-on's Configuration tab.
+    if jq -c '{options: (. + {rotate_keys: false})}' /data/options.json \
+        | curl -fsS --max-time 10 -X POST \
+            -H "Authorization: Bearer ${SUPERVISOR_TOKEN:-}" \
+            -H "Content-Type: application/json" \
+            --data @- http://supervisor/addons/self/options >/dev/null; then
+        bashio::log.info "Keys rotated. rotate_keys has been switched back off."
+    else
+        bashio::log.warning "Keys rotated, but rotate_keys could not be switched off automatically. Turn it off yourself; until then the keys stay as they are now."
+    fi
+fi
 
 SNI="$(bashio::config 'sni')"
 FINGERPRINT="$(bashio::config 'fingerprint')"

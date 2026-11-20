@@ -20,12 +20,16 @@ these links in testing.
 | `client_name` | `phone` | Label shown in the client app. |
 | `uuid` | *(auto)* | Set it only if you want a specific UUID. |
 | `short_id` | *(auto)* | An even number of hex characters, up to 16. Auto-generated if empty. |
+| `rotate_keys` | `false` | Turn on and restart to get a new UUID, REALITY key pair and short ID. Switches itself back off afterwards. |
 | `fingerprint` | `chrome` | uTLS fingerprint the client uses. |
 | `log_level` | `warning` | Xray log level. |
 | `core_config` | *(empty)* | **Advanced.** Paste a full Xray JSON config to bypass REALITY mode. The inbound must listen on port 443 inside the container. |
 
-To rotate all keys (for example after an IP block), **uninstall and reinstall**
-the add-on, which clears its `/data`. Then rescan the new QR code.
+To rotate all keys (for example after a leak or an IP block), turn on
+`rotate_keys`, save and restart. Then rescan the new QR code from **Open Web
+UI**. Keys rotate only once per switch-on, so a forgotten switch can't change
+them again on a later restart. The add-on uses the Supervisor API only to
+switch this option back off.
 
 ## Router setup (TP-Link Omada)
 
